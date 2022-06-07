@@ -5,7 +5,7 @@ namespace DenizTezcan\LaravelPayNL;
 use Paynl\Config;
 use Paynl\Error\Error;
 use Paynl\Paymentmethods;
-use Paynl\Result\Transaction\Status ;
+use Paynl\Result\Transaction\Status;
 use Paynl\Transaction;
 
 class PayNL
