@@ -2,64 +2,64 @@
 
 namespace DenizTezcan\LaravelPayNL;
 
-use Paynl\{Config, Helper, Paymentmethods, Transaction};
+use Paynl\Config;
 use Paynl\Error\Error;
+use Paynl\Paymentmethods;
 use Paynl\Result\Result\Status;
-use DateTime;
+use Paynl\Transaction;
 
 class PayNL
 {
-	private $testMode = 0;
+    private $testMode = 0;
 
-	public function __construct()
-	{
-		Config::setTokenCode(config('paynl.tokenCode'));
-		Config::setApiToken(config('paynl.apiToken'));
-		Config::setServiceId(config('paynl.serviceId'));
-		$this->testMode = config('paynl.testMode');
-	}
+    public function __construct()
+    {
+        Config::setTokenCode(config('paynl.tokenCode'));
+        Config::setApiToken(config('paynl.apiToken'));
+        Config::setServiceId(config('paynl.serviceId'));
+        $this->testMode = config('paynl.testMode');
+    }
 
-	public function getPaymentMethods(): array
-	{
-		return Paymentmethods::getList();
-	}
+    public function getPaymentMethods(): array
+    {
+        return Paymentmethods::getList();
+    }
 
-	public function minimumTransaction(float $amount, string $returnUrl): array|string
-	{
-		$options = [
-			'amount'	=> $amount,
-			'returnUrl'	=> $returnUrl,
-		];
+    public function minimumTransaction(float $amount, string $returnUrl): array|string
+    {
+        $options = [
+            'amount'	   => $amount,
+            'returnUrl'	=> $returnUrl,
+        ];
 
-		return $this->startTransaction($options);
-	}
+        return $this->startTransaction($options);
+    }
 
-	public function transaction(float $amount, string $returnUrl, array $options): array|string
-	{
-		$options['amount']		= $amount;
-		$options['returnUrl']	= $returnUrl;
-	
-		return $this->startTransaction($options);
-	}
+    public function transaction(float $amount, string $returnUrl, array $options): array|string
+    {
+        $options['amount'] = $amount;
+        $options['returnUrl'] = $returnUrl;
 
-	private function startTransaction(array $options): array|string
-	{
-		try {
-			$options['testmode'] 	= $this->testMode;
-			$transaction 			= Transaction::start($options);
+        return $this->startTransaction($options);
+    }
 
-			return [
-				'transactionId' => $transaction->getTransactionId(),
-				'redirectUrl' 	=> $transaction->getRedirectUrl(),
-			];
-		} catch (Error $e) {
-		    echo "Fout: " . $e->getMessage();
-		}
-	}
+    private function startTransaction(array $options): array|string
+    {
+        try {
+            $options['testmode'] = $this->testMode;
+            $transaction = Transaction::start($options);
 
-	public function getStatus($transactionId): Status
-	{
-		return Transaction::status($transactionId);
-	}
+            return [
+                'transactionId' => $transaction->getTransactionId(),
+                'redirectUrl' 	 => $transaction->getRedirectUrl(),
+            ];
+        } catch (Error $e) {
+            echo 'Fout: '.$e->getMessage();
+        }
+    }
 
+    public function getStatus($transactionId): Status
+    {
+        return Transaction::status($transactionId);
+    }
 }
