@@ -45,8 +45,8 @@ class PayNL
 	private function startTransaction(array $options): array|string
 	{
 		try {
-			$options['testmode'] = $this->testMode;
-			$transaction = Transaction::start($options);
+			$options['testmode'] 	= $this->testMode;
+			$transaction 			= Transaction::start($options);
 
 			return [
 				'transactionId' => $transaction->getTransactionId(),
