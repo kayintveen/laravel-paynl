@@ -3,7 +3,7 @@
     "description": "Laravel wrapper for Pay.nl PHP SDK",
     "type": "library",
     "license": "MIT",
-    "version": "0.0.2",
+    "version": "1.0.0",
     "homepage": "https://github.com/deniztezcan/laravel-paynl",
     "authors": [
         {
