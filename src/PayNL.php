@@ -20,6 +20,11 @@ class PayNL
         $this->testMode = config('paynl.testMode');
     }
 
+    public function setServiceId(string $serviceId): void
+    {
+        Config::setServiceId($serviceId);
+    }
+
     public function getPaymentMethods(): array
     {
         return Paymentmethods::getList();
