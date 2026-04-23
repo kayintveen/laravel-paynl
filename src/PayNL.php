@@ -1,28 +1,23 @@
 <?php
 
-namespace Kayintveen\LaravelPayNL;
+namespace DenizTezcan\LaravelPayNL;
 
-use Kayintveen\LaravelPayNL\Exceptions\PayNLException;
 use Paynl\Config;
-use Paynl\Error\Api;
 use Paynl\Error\Error;
-use Paynl\Error\Required\ApiToken;
-use Paynl\Error\Required\ServiceId;
 use Paynl\Paymentmethods;
 use Paynl\Result\Transaction\Status;
 use Paynl\Transaction;
 
 class PayNL
 {
-    private bool $testMode;
+    private $testMode = 0;
 
     public function __construct()
     {
-        Config::setTokenCode(config('paynl.token_code'));
-        Config::setApiToken(config('paynl.api_token'));
-        Config::setServiceId(config('paynl.service_id'));
-
-        $this->testMode = config('paynl.test_mode');
+        Config::setTokenCode(config('paynl.tokenCode'));
+        Config::setApiToken(config('paynl.apiToken'));
+        Config::setServiceId(config('paynl.serviceId'));
+        $this->testMode = config('paynl.testMode');
     }
 
     public function setServiceId(string $serviceId): void
@@ -35,22 +30,16 @@ class PayNL
         return Paymentmethods::getList();
     }
 
-    /**
-     * @throws PayNLException
-     */
     public function minimumTransaction(float $amount, string $returnUrl): array|string
     {
         $options = [
-            'amount' => $amount,
-            'returnUrl' => $returnUrl,
+            'amount'	   => $amount,
+            'returnUrl'	=> $returnUrl,
         ];
 
         return $this->startTransaction($options);
     }
 
-    /**
-     * @throws PayNLException
-     */
     public function transaction(float $amount, string $returnUrl, array $options): array|string
     {
         $options['amount'] = $amount;
@@ -59,10 +48,7 @@ class PayNL
         return $this->startTransaction($options);
     }
 
-    /**
-     * @throws PayNLException
-     */
-    public function startTransaction(array $options): array|string
+    private function startTransaction(array $options): array|string
     {
         try {
             $options['testmode'] = $this->testMode;
@@ -70,19 +56,13 @@ class PayNL
 
             return [
                 'transactionId' => $transaction->getTransactionId(),
-                'redirectUrl' => $transaction->getRedirectUrl(),
+                'redirectUrl' 	 => $transaction->getRedirectUrl(),
             ];
         } catch (Error $e) {
-            throw new PayNLException('Failed to start transaction: '.$e->getMessage(), 0, $e);
+            echo 'Fout: '.$e->getMessage();
         }
     }
 
-    /**
-     * @throws ServiceId
-     * @throws Api
-     * @throws Error
-     * @throws ApiToken
-     */
     public function getStatus($transactionId): Status
     {
         return Transaction::status($transactionId);

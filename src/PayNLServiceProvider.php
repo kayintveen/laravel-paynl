@@ -1,42 +1,27 @@
 <?php
 
-namespace Kayintveen\LaravelPayNL;
+namespace DenizTezcan\LaravelPayNL;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
-class PayNLServiceProvider extends ServiceProvider
+class PayNLServiceProvider extends BaseServiceProvider
 {
-    /**
-     * Register services.
-     */
-    public function register(): void
+    public function boot()
     {
-        $this->mergeConfigFrom(
-            __DIR__.'/config/paynl.php',
-            'paynl'
-        );
+        $this->publishes([
+            __DIR__.'/../config/paynl.php' => config_path('paynl.php'),
+        ]);
+    }
 
-        $this->app->singleton('paynl', function ($app) {
-            $config = $app['config']['paynl'];
-
-            return new PayNL(
-                tokenCode: $config['token_code'] ?? '',
-                apiToken: $config['api_token'] ?? '',
-                serviceId: $config['service_id'] ?? '',
-                testMode: $config['test_mode'] ?? false
-            );
+    public function register()
+    {
+        $this->app->bind('paynl', function () {
+            return new PayNL();
         });
     }
 
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
+    public function provides()
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/config/paynl.php' => config_path('paynl.php'),
-            ], 'paynl-config');
-        }
+        return ['paynl'];
     }
 }

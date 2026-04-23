@@ -1,12 +1,12 @@
 <?php
 
-namespace Kayintveen\LaravelPayNL\Facades;
+namespace DenizTezcan\LaravelPayNL\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 class PayNL extends Facade
 {
-    protected static function getFacadeAccessor(): string
+    protected static function getFacadeAccessor()
     {
         return 'paynl';
     }
